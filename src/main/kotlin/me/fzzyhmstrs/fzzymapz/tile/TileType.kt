@@ -2,7 +2,7 @@ package me.fzzyhmstrs.fzzymapz.tile
 
 import com.google.gson.JsonObject
 
-abstract class TileType {
+abstract class TileType(val id: Identifier) {
 
     abstract fun loadTile(json: JsonObject): Tile
 
