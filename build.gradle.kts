@@ -21,20 +21,12 @@ repositories {
         url = uri("https://maven.terraformersmc.com/")
     }
     maven {
-        name = "REI"
-        url = uri("https://maven.shedaniel.me")
-    }
-    maven {
         name = "Progwml6 maven"
         url = uri("https://dvs1.progwml6.com/files/maven/")
     }
     maven {
         name = "Ladysnake Libs"
         url = uri("https://ladysnake.jfrog.io/artifactory/mods")
-    }
-    maven {
-        name = "Patchouli Lib"
-        url = uri("https://maven.blamejared.com")
     }
     maven {
         name = "Modrinth"
@@ -46,21 +38,6 @@ repositories {
     maven {
         name = "Jitpack"
         url = uri("https://jitpack.io")
-    }
-    flatDir {
-        dirs("F:\\Documents\\Mod Libraries\\ac\\build\\libs")
-    }
-    flatDir {
-        dirs("F:\\Documents\\Mod Libraries\\fc\\build\\libs")
-    }
-    flatDir {
-        dirs("F:\\Documents\\Mod Libraries\\gc\\build\\libs")
-    }
-    flatDir {
-        dirs("F:\\Documents\\Mod Development\\ai\\build\\libs")
-    }
-    flatDir {
-        dirs("F:\\Documents\\Mod Libraries\\fzzy_config\\build\\libs")
     }
     mavenCentral()
 }
@@ -77,37 +54,6 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricVersion")
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc:fabric-language-kotlin:$fabricKotlinVersion")
-
-    val trinketsVersion: String by project
-    modImplementation("dev.emi:trinkets:$trinketsVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
-    include("dev.emi:trinkets:$trinketsVersion")
-
-    val acVersion: String by project
-    modImplementation(":amethyst_core-$acVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
-
-    val fcVersion: String by project
-    modImplementation(":fzzy_core-$fcVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
-
-    val gcVersion: String by project
-    modImplementation(":gear_core-$gcVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
-
-    val aiVersion: String by project
-    modImplementation(":amethyst_imbuement-$aiVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
-
-    val fzzyConfigVersion: String by project
-    modImplementation(":fzzy_config-$fzzyConfigVersion"){
-        exclude("net.fabricmc.fabric-api")
-    }
 
     val meVersion: String by project
     implementation("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$meVersion")
