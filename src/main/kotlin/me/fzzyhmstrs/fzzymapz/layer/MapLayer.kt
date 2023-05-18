@@ -11,11 +11,15 @@ abstract class MapLayer(val type: ThemeType){
     protected val data: MutableMap<Identifier,MutableMap<Int,MutableMap<Int,Tile>>> = mutableMapOf()
 
     fun processChunk(x: Int, z: Int, world: World, chunk: WorldChunk){
-        val tile = processChunkForTil(world, chunk)
+        if (!shouldProcessChunk(x,z,world,chunk)) return
+        val tile = processChunkForTile(world, chunk)
         if (tile != Tile.EMPTY){
             data.getOrPut(world.dimensionKey.value) {mutableMapOf()} .getOrPut(z) {mutableMapOf()} .put(x,tile)
         }
     }
+    
+    // called first by the chunk processor to determine whether any actual processing should happen
+    abstract fun shouldProcessChunk(x: Int, z: Int, world: World, chunk: WorldChunk): Boolean
     
     // called by the chunk processor so the layer can grab and store any data it needs.
     abstract fun processChunkForTile(world: World, chunk: WorldChunk): Tile
