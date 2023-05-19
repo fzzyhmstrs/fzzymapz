@@ -7,7 +7,6 @@ import net.minecraft.util.Identifier
 
 class ConnectedBiomeTile(id: Identifier, var u: Int, var v: Int): Tile(id,RegisterTile.CONNECTED_BIOME_TYPE) {
 
-    override fun draw(matrices: MatrixStack, x: Int, y: Int) {
-        TODO("Not yet implemented")
+    override fun draw(matrices: MatrixStack, x: Int, y: Int, scale: Float, texture: Identifier) {
     }
 }
