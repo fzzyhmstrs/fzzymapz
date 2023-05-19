@@ -3,12 +3,12 @@ package me.fzzyhmstrs.fzzymapz.registry
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import me.fzzyhmstrs.fzzymapz.FM
-import me.fzzyhmstrs.fzzymapz.theme.impl.BiomeType
 import me.fzzyhmstrs.fzzymapz.theme.Theme
 import me.fzzyhmstrs.fzzymapz.theme.ThemeType
+import me.fzzyhmstrs.fzzymapz.theme.impl.BiomeType
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.registry.Registry
 import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourceManager

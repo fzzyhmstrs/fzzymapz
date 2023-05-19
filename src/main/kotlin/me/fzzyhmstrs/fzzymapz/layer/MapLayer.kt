@@ -1,9 +1,12 @@
 package me.fzzyhmstrs.fzzymapz.layer
 
+import com.google.gson.JsonObject
+import me.fzzyhmstrs.fzzymapz.registry.RegisterTile
 import me.fzzyhmstrs.fzzymapz.theme.ThemeType
 import me.fzzyhmstrs.fzzymapz.tile.Tile
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import net.minecraft.world.chunk.WorldChunk
 
 abstract class MapLayer(val type: ThemeType){
     
@@ -14,12 +17,14 @@ abstract class MapLayer(val type: ThemeType){
         if (!shouldProcessChunk(x,z,world,chunk)) return
         val tile = processChunkForTile(world, chunk)
         if (tile != Tile.EMPTY){
-            data.getOrPut(world.dimensionKey.value) {mutableMapOf()} .getOrPut(z) {mutableMapOf()} .put(x,tile)
+            data.getOrPut(world.dimensionKey.value) {mutableMapOf()} .getOrPut(z) {mutableMapOf()}[x] = tile
         }
     }
     
     // called first by the chunk processor to determine whether any actual processing should happen
-    abstract fun shouldProcessChunk(x: Int, z: Int, world: World, chunk: WorldChunk): Boolean
+    open fun shouldProcessChunk(x: Int, z: Int, world: World, chunk: WorldChunk): Boolean{
+        return data[world.dimensionKey.value]?.get(z)?.containsKey(x) != true
+    }
     
     // called by the chunk processor so the layer can grab and store any data it needs.
     abstract fun processChunkForTile(world: World, chunk: WorldChunk): Tile
@@ -33,10 +38,10 @@ abstract class MapLayer(val type: ThemeType){
             val typeMap: MutableMap<Identifier,MutableMap<Int,MutableMap<Int,JsonObject>>> = mutableMapOf()
             for (entryZ in entryWorld.value){
                 for (entryX in entryZ.value){
-                    val type = entryX.value.id
+                    val type = entryX.value.type.id
                     val jsonX = entryX.value.toJson()
                     val mapType = typeMap.getOrPut(type) {mutableMapOf()}
-                    mapType.getOrPut(entryZ.key) {mutableMapOf()} .put(entryX.key,jsonX)
+                    mapType.getOrPut(entryZ.key) {mutableMapOf()}[entryX.key] = jsonX
                 }
             }
             //reads back the typeMap to serialize the data into a more packed order (type -> Z -> X -> Data) instead of (Z -> X -> Type -> Data) since type will be typically a constant
@@ -50,7 +55,7 @@ abstract class MapLayer(val type: ThemeType){
                     }
                     jsonType.add(entryZ.key.toString(),jsonZ)
                 }
-                jsonWorld.add(entry.key.toString(),jsonType)
+                jsonWorld.add(entryType.key.toString(),jsonType)
             }
             json.add(entryWorld.key.toString(), jsonWorld)
         }
@@ -65,20 +70,20 @@ abstract class MapLayer(val type: ThemeType){
         try {
             for (entryWorld in json.entrySet()){
                 val worldId = Identifier.tryParse(entryWorld.key)?:continue
-                val jsonWorld = entryWorld.value.asJsonObject()
-                val worldMap: MutableMap<Int<MutableMap<Int, Tile>>> = mutableMapOf()
+                val jsonWorld = entryWorld.value.asJsonObject
+                val worldMap: MutableMap<Int,MutableMap<Int, Tile>> = mutableMapOf()
                 for (entryType in jsonWorld.entrySet()){
                     val typeId = Identifier.tryParse(entryType.key)?:continue
                     val type = RegisterTile.TYPES.get(typeId)?:continue
-                    val jsonType = entryType.value.asJsonObject()
+                    val jsonType = entryType.value.asJsonObject
                     for (entryZ in jsonType.entrySet()){
                         val z = entryZ.key.toIntOrNull()?:continue
                         val jsonZ = entryZ.value as JsonObject
                         for (entryX in jsonZ.entrySet()){
                             val x = entryX.key.toIntOrNull()?:continue
-                            val jsonX = entryX.value.asJsonObject()
+                            val jsonX = entryX.value.asJsonObject
                             val tile = type.loadTile(jsonX)
-                            worldMap.getOrPut(z) {mutableMapOf()} .put(x,tile)
+                            worldMap.getOrPut(z) {mutableMapOf()}[x] = tile
                         }
                     }
                 }

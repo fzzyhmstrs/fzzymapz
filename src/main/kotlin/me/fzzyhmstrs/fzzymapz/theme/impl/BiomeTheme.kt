@@ -12,6 +12,6 @@ class BiomeTheme(private val map: MutableMap<Identifier, Identifier>): Theme(Reg
     }
 
     companion object{
-        private val FALLBACK = Identifier(FM.MOD_ID,"")
+        private val FALLBACK = Identifier(FM.MOD_ID,"empty")
     }
 }

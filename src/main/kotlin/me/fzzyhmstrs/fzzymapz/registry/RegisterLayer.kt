@@ -2,11 +2,13 @@ package me.fzzyhmstrs.fzzymapz.registry
 
 import me.fzzyhmstrs.fzzymapz.FM
 import me.fzzyhmstrs.fzzymapz.layer.MapLayer
+import me.fzzyhmstrs.fzzymapz.layer.impl.SurfaceBiomeLayer
 import me.fzzyhmstrs.fzzymapz.tile.Tile
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import net.minecraft.world.chunk.WorldChunk
 
 object RegisterLayer {
 
@@ -16,7 +18,7 @@ object RegisterLayer {
 
     //////////////////////////
 
-    //val SURFACE_BIOMES = Registry.register(LAYERS, Identifier(FM.MOD_ID,"surface_biomes"),SurfaceBiomesLayer)
+    val SURFACE_BIOMES = Registry.register(LAYERS, Identifier(FM.MOD_ID,"surface_biomes"), SurfaceBiomeLayer)
 
     //////////////////////////
 
@@ -25,7 +27,14 @@ object RegisterLayer {
     }
 
     object EmptyLayer: MapLayer(RegisterTheme.EMPTY_TYPE) {
-        override fun process(world: World){}
+
+        override fun shouldProcessChunk(x: Int, z: Int, world: World, chunk: WorldChunk): Boolean {
+            return false
+        }
+
+        override fun processChunkForTile(world: World, chunk: WorldChunk): Tile {
+            return Tile.EMPTY
+        }
 
         override fun save(){}
 

@@ -1,16 +1,9 @@
 package me.fzzyhmstrs.imbued_ascendancy.map
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.mojang.blaze3d.systems.RenderSystem
-import me.fzzyhmstrs.fzzy_core.coding_util.AcText
 import me.fzzyhmstrs.imbued_ascendancy.IA
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.registry.Registries
 import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourceManager
@@ -195,7 +188,7 @@ object MapData: SimpleSynchronousResourceReloadListener{
         if (tileWest != null){
             if (tileWest.biome == biomeId) sum += 9
         }
-        val uv = getTileUv(sum)
+        val uv = getTileUV(sum)
         val tile = Tile(textures.first, textures.second, uv.first, uv.second,biomeId)
     }
 

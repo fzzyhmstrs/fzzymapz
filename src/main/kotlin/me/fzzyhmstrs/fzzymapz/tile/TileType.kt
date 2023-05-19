@@ -1,6 +1,7 @@
 package me.fzzyhmstrs.fzzymapz.tile
 
 import com.google.gson.JsonObject
+import net.minecraft.util.Identifier
 
 abstract class TileType(val id: Identifier) {
 

@@ -1,8 +1,8 @@
 package me.fzzyhmstrs.fzzymapz.theme
 
 import me.fzzyhmstrs.fzzymapz.FM
-import net.minecraft.util.Identifier
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 
 abstract class Theme(val type: ThemeType){
 
