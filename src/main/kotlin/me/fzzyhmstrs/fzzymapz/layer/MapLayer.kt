@@ -96,8 +96,8 @@ abstract class MapLayer(val type: ThemeType){
     }
 
     // the main result of the layer. Provides the tile that the map renderer will use as needed to draw the screen
-    open fun getTile(world: World, x: Int, z: Int): Tile{
-        return data[world.dimensionKey.value]?.get(x)?.get(z)?:fallback()
+    open fun getTile(dimKey: Identifier, x: Int, z: Int): Tile{
+        return data[dimKey]?.get(x)?.get(z)?:fallback()
     }
     
     open fun fallback(): Tile{
