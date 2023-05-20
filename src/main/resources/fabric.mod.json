@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "imbued_ascendancy",
+  "id": "fzzymapz",
   "version": "${version}",
-  "name": "Imbued Ascendancy",
-  "description": "An expansion for Amethyst Imbuement that expands on the gear offered, including brand new end-game gear, as well as new Bosses, Biomes, and Structures to explore!",
+  "name": "Fzzymapz",
+  "description": "A map creation Library that can be used to build custom tile-based maps and mini-maps that record and visualize all sorts of chunk data.",
   "authors": [
     "fzzyhmstrs"
   ],
@@ -13,40 +13,30 @@
     "sources": "https://github.com/fzzyhmstrs/ia"
   },
   "license": "MIT License",
-  "icon": "assets/imbued_ascendancy/icon.png",
+  "icon": "assets/fzzymapz/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       {
         "adapter": "kotlin",
-        "value": "me.fzzyhmstrs.imbued_ascendancy.IA"
+        "value": "me.fzzyhmstrs.fzzymapz.FM"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "me.fzzyhmstrs.imbued_ascendancy.IAClient"
-      }
-    ],
-    "preLaunch": [
-      {
-        "adapter": "kotlin",
-        "value": "me.fzzyhmstrs.imbued_ascendancy.IAPreLaunch"
+        "value": "me.fzzyhmstrs.fzzymapz.FMClient"
       }
     ]
   },
   "mixins": [
-    "imbued_ascendancy.mixins.json"
+    "fzzymapz.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.11",
     "fabric": "*",
-    "fabric-key-binding-api-v1": "*",
     "fabric-language-kotlin": ">=1.7.4+kotlin.1.6.21",
     "minecraft": ">=1.19.3",
-    "java": ">=17",
-	"amethyst_imbuement": ">=1.19.3-06",
-    "fzzy_core": ">=0.1.3+1.19.3",
-    "amethyst_core": ">=1.1.0+1.19.3"
+    "java": ">=17"
   }
 }

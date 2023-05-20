@@ -11,6 +11,12 @@ abstract class ThemeType{
     //the theme loader will select a theme from the registry based on the
     abstract fun loadTheme(json: JsonObject): Theme
 
+    protected abstract fun defaultTheme(): Identifier
+
+    fun getDefaultTheme(): Theme{
+        return getTheme(defaultTheme())
+    }
+
     //provides the list of themes loaded to this type
     fun getThemes(): Collection<Theme>{
         return this.themes.values

@@ -1,6 +1,7 @@
 package me.fzzyhmstrs.fzzymapz.theme.impl
 
 import com.google.gson.JsonObject
+import me.fzzyhmstrs.fzzymapz.FM
 import me.fzzyhmstrs.fzzymapz.registry.RegisterTheme
 import me.fzzyhmstrs.fzzymapz.theme.Theme
 import me.fzzyhmstrs.fzzymapz.theme.ThemeType
@@ -8,6 +9,9 @@ import net.minecraft.util.Identifier
 
 object BiomeType: ThemeType(){
 
+    override fun defaultTheme(): Identifier {
+        return Identifier(FM.MOD_ID,"tan_monochrome_biomes")
+    }
 
     //the theme loader will select a theme from the registry based on the
     override fun loadTheme(json: JsonObject): Theme {

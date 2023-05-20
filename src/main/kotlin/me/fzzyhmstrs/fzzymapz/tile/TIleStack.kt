@@ -3,6 +3,7 @@ package me.fzzyhmstrs.fzzymapz.tile
 import com.google.gson.JsonObject
 import me.fzzyhmstrs.fzzymapz.FM
 import me.fzzyhmstrs.fzzymapz.registry.RegisterTile
+import me.fzzyhmstrs.fzzymapz.theme.Theme
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
 

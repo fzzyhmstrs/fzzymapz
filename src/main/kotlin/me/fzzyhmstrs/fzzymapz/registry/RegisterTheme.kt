@@ -102,6 +102,10 @@ object RegisterTheme: SimpleSynchronousResourceReloadListener{
                 return inputId
             }
         }
+
+        override fun defaultTheme(): Identifier {
+            TODO("Not yet implemented")
+        }
         override fun loadTheme(json: JsonObject): Theme{
             return EMPTY_THEME
         }

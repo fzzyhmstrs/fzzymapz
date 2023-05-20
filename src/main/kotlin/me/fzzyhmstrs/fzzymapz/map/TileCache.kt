@@ -1,7 +1,12 @@
 package me.fzzyhmstrs.fzzymapz.map
 
 import me.fzzyhmstrs.fzzymapz.FM
-import net.minecraft.util.math.ChunkPos
+import me.fzzyhmstrs.fzzymapz.layer.MapLayer
+import me.fzzyhmstrs.fzzymapz.theme.Theme
+import me.fzzyhmstrs.fzzymapz.tile.TileStack
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.util.Identifier
+import kotlin.math.abs
 
 class TileCache(private val map: Map){
 
@@ -13,13 +18,11 @@ class TileCache(private val map: Map){
     private var lastCachedH: Int = 0
     
     fun updateCacheTheme(){
-        for (xList in cacheData){
-            for (zList in xList){
-                for (tileList in zList){
-                    for (tile in tileList){
-                        val theme = map.getCurrentTheme(tile.tile.layer)
-                        tile.updateTheme(theme)
-                    }
+        for (zList in cacheData){
+            for (tileList in zList){
+                for (tile in tileList){
+                    val theme = map.getCurrentTheme(tile.tile.layer)
+                    tile.updateTheme(theme)
                 }
             }
         }
@@ -27,24 +30,25 @@ class TileCache(private val map: Map){
     
     fun updateCacheTiles(player: PlayerEntity, dimKey: Identifier, w: Int, h: Int){
         val chunkPos = player.chunkPos
-        chunkWidth = w / 16
+        var chunkWidth = w / 16
         if (w % 16 != 0) chunkWidth += 1
-        chunkHeight = h / 16
+        var chunkHeight = h / 16
         if (h % 16 != 0) chunkHeight += 1
         if(lastCachedDim == dimKey && lastCachedX == chunkPos.x && lastCachedZ == chunkPos.z && chunkWidth == lastCachedW && chunkHeight == lastCachedH) return
         val newCache: MutableList<List<List<TileStack>>> = mutableListOf()
         //if the cache is structurally changing in a major way (new dimension, new size, moved more than one entire frame from it's last caching) rebuild from scratch
+        val chunkWidthRange = if(chunkWidth % 2 != 0){
+            ((-chunkWidth/2)+chunkPos.x)..((chunkWidth/2)+chunkPos.x)
+        } else {
+            ((-chunkWidth/2)+chunkPos.x) until (chunkWidth/2)+chunkPos.x
+        }
+        val chunkHeightRange = if(chunkHeight % 2 != 0){
+            ((-chunkHeight/2)+chunkPos.z)..((chunkHeight/2)+chunkPos.z)
+        } else {
+            ((-chunkHeight/2)+chunkPos.z) until (chunkHeight/2)+chunkPos.z
+        }
         if(lastCachedDim != dimKey || abs(chunkPos.x - lastCachedX) >= lastCachedW || abs(chunkPos.z - lastCachedZ) >= lastCachedH || chunkWidth != lastCachedW || chunkHeight != lastCachedH){
-            val chunkWidthRange = if(chunkWidth % 2 != 0){
-                ((-chunkWidth/2)+chunkPos.x)..((chunkWidth/2)+chunkPos.x)
-            } else {
-                ((-chunkWidth/2)+chunkPos.x)..((chunkWidth/2)+chunkPos.x-1)
-            }
-            val chunkHeightRange = if(chunkHeight % 2 != 0){
-                ((-chunkHeight/2)+chunkPos.z)..((chunkHeight/2)+chunkPos.z)
-            } else {
-                ((-chunkHeight/2)+chunkPos.z)..((chunkHeight/2)+chunkPos.z-1)
-            }
+
             fullNewBuild(newCache, dimKey, chunkWidthRange, chunkHeightRange, player.blockPos.y)
             cacheData = newCache
             lastCachedDim = dimKey
@@ -59,11 +63,12 @@ class TileCache(private val map: Map){
         var xDeltaIndex = xDelta
         val zDelta = chunkPos.z - lastCachedZ
         if (zDelta == 0){
-            for (w in chunkWidthRange){
-                if (xDeltaIndex < 0 || xDeltaIndex >= dataCache.size){
-                    fullBuild(newCache, dimKey,w,player.blockPos.y,chunkHeightRange)
+            
+            for (wid in chunkWidthRange){
+                if (xDeltaIndex < 0 || xDeltaIndex >= cacheData.size){
+                    fullBuild(newCache, dimKey,wid,player.blockPos.y,chunkHeightRange)
                 } else {
-                    copyOver(newCache, index)
+                    copyOver(newCache, xDeltaIndex)
                 }
                 xDeltaIndex++
             }
@@ -71,23 +76,25 @@ class TileCache(private val map: Map){
             val partialChunkHeightRange = if(chunkHeight % 2 != 0){
                     ((chunkHeight/2)+chunkPos.z-zDelta+1)..((chunkHeight/2)+chunkPos.z)
                 } else {
-                    ((chunkHeight/2)+chunkPos.z-zDelta)..((chunkHeight/2)+chunkPos.z-1)
+                ((chunkHeight/2)+chunkPos.z-zDelta) until (chunkHeight/2)+chunkPos.z
                 }
-            for (w in chunkWidthRange){
-                if (xDeltaIndex < 0 || xDeltaIndex >= dataCache.size){
-                    fullBuild(newCache, dimKey,w,player.blockPos.y,chunkHeightRange)
+            for (wid in chunkWidthRange){
+                if (xDeltaIndex < 0 || xDeltaIndex >= cacheData.size){
+                    fullBuild(newCache, dimKey,wid,player.blockPos.y,chunkHeightRange)
                 } else {
-                    partialBuildEnd(newCache,dimKey,w,player.blockPos.y,partialChunkHeightRange,cacheData.get(xDeltaIndex).subList(zDelta,cacheData.get(xDeltaIndex).size))
+                    partialBuildEnd(newCache,dimKey,wid,player.blockPos.y,partialChunkHeightRange,
+                        cacheData[xDeltaIndex].subList(zDelta, cacheData[xDeltaIndex].size))
                 }
                 xDeltaIndex++
             }
         } else {
-            val partialChunkHeightRange = ((-chunkHeight/2)+chunkPos.z)..((-chunkHeight/2)+chunkPos.z-zDelta-1)
-            for (w in chunkWidthRange){
-                if (xDeltaIndex < 0 || xDeltaIndex >= dataCache.size){
-                    fullBuild(newCache, dimKey,w,player.blockPos.y,chunkHeightRange)
+            val partialChunkHeightRange = ((-chunkHeight/2)+chunkPos.z) until (-chunkHeight/2)+chunkPos.z-zDelta
+            for (wid in chunkWidthRange){
+                if (xDeltaIndex < 0 || xDeltaIndex >= cacheData.size){
+                    fullBuild(newCache, dimKey,wid,player.blockPos.y,chunkHeightRange)
                 } else {
-                    partialBuildFront(newCache,dimKey,w,player.blockPos.y,partialChunkHeightRange,cacheData.get(xDeltaIndex).subList(0,cacheData.get(xDeltaIndex).size - zDelta))
+                    partialBuildFront(newCache,dimKey,wid,player.blockPos.y,partialChunkHeightRange,
+                        cacheData[xDeltaIndex].subList(0, cacheData[xDeltaIndex].size - zDelta))
                 }
                 xDeltaIndex++
             }
@@ -96,11 +103,12 @@ class TileCache(private val map: Map){
     }
 
     private fun gatherLayers(dimKey: Identifier, x: Int, y: Int, z: Int): List<TileStack>{
-        val layerList: MutableList<Tile> = mutableListOf()
-        for (layer in map.getLayers()){
+        val layerList: MutableList<TileStack> = mutableListOf()
+        for (layer: MapLayer in map.getLayers()){
             val tile = layer.getTile(dimKey,x,y,z)
             if (tile.hasContent){
-                layerList.add(tile)
+                val theme: Theme = map.getCurrentTheme(tile.layer)
+                layerList.add(TileStack(tile, theme.getScale(),theme.provide(tile.id)))
             }
             if (layer.opaque()){
                 break
@@ -110,14 +118,14 @@ class TileCache(private val map: Map){
         return layerList
     }
     
-    privat fullNewBuild(newCache: MutableList<List<List<TileStack>>>, dimKey: Identifier, wRange: IntRange, hRange: IntRange, y: Int){
+    private fun fullNewBuild(newCache: MutableList<List<List<TileStack>>>, dimKey: Identifier, wRange: IntRange, hRange: IntRange, y: Int){
         for (w in wRange){
             fullBuild(newCache, dimKey, w, y, hRange)
         }
     }
     
     private fun fullBuild(newCache: MutableList<List<List<TileStack>>>,dimKey: Identifier, w: Int, y: Int, hRange: IntRange){
-        val hList = mutableListOf()
+        val hList: MutableList<List<TileStack>> = mutableListOf()
         for (h in hRange){
             val list = gatherLayers(dimKey,w,y,h)
             hList.add(list)
@@ -126,11 +134,11 @@ class TileCache(private val map: Map){
     }
     
     private fun copyOver(newCache: MutableList<List<List<TileStack>>>, index: Int){
-        newCache.add(cacheData.get(index))
+        newCache.add(cacheData[index])
     }
     
-    private fun partialBuildEnd(newCache: MutableList<List<List<TileStack>>>,dimKey: Identifier, w: Int, y: Int, hRange: IntRange, existingData: List<TileStack>){
-        val hList = mutableListOf()
+    private fun partialBuildEnd(newCache: MutableList<List<List<TileStack>>>,dimKey: Identifier, w: Int, y: Int, hRange: IntRange, existingData: List<List<TileStack>>){
+        val hList: MutableList<List<TileStack>> = mutableListOf()
         hList.addAll(existingData)
         for (h in hRange){
             val list = gatherLayers(dimKey,w,y,h)
@@ -138,8 +146,8 @@ class TileCache(private val map: Map){
         }
         newCache.add(hList)
     }
-    private fun partialBuildFront(newCache: MutableList<List<List<TileStack>>>,dimKey: Identifier, w: Int, y: Int, hRange: IntRange, existingData: List<TileStack>){
-        val hList = mutableListOf()
+    private fun partialBuildFront(newCache: MutableList<List<List<TileStack>>>,dimKey: Identifier, w: Int, y: Int, hRange: IntRange, existingData: List<List<TileStack>>){
+        val hList: MutableList<List<TileStack>> = mutableListOf()
         for (h in hRange){
             val list = gatherLayers(dimKey,w,y,h)
             hList.add(list)
