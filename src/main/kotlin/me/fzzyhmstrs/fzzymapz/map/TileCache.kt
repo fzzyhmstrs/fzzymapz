@@ -8,7 +8,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.math.abs
 
-class TileCache(private val map: Map){
+class TileCache(private val map: FzzyMap){
 
     private var cacheData: List<List<List<TileStack>>> = listOf()
     private var lastCachedDim: Identifier = Identifier(FM.MOD_ID,"dirty")
@@ -16,8 +16,36 @@ class TileCache(private val map: Map){
     private var lastCachedZ: Int = Int.MAX_VALUE
     private var lastCachedW: Int = 0
     private var lastCachedH: Int = 0
-    
-    fun updateCacheTheme(){
+
+    fun getTiles(player: PlayerEntity, dimKey: Identifier): List<List<List<TileStack>>>{
+        return getTiles(player, dimKey,lastCachedW,lastCachedH)
+    }
+
+    fun getTiles(player: PlayerEntity, dimKey: Identifier,w: Int, h: Int, startW: Int = 0, startH: Int = 0): List<List<List<TileStack>>>{
+        var chunkWidth = w / 16
+        if (w % 16 != 0) chunkWidth += 1
+        var chunkHeight = h / 16
+        if (h % 16 != 0) chunkHeight += 1
+        if (chunkWidth > lastCachedW || chunkHeight > lastCachedH){
+            updateCacheTiles(player, dimKey, w, h)
+        }
+        val tiles: MutableList<List<List<TileStack>>> = mutableListOf()
+        var lastWIndex = chunkWidth + startW - 1
+        if (lastWIndex >= cacheData.size){
+            lastWIndex = cacheData.size - 1
+        }
+        var lastHIndex = chunkHeight + startH - 1
+        for (wid in startW.. lastWIndex){
+            val list = cacheData[wid]
+            if (lastHIndex >= list.size){
+                lastHIndex = list.size - 1
+            }
+            tiles.add(list.subList(startH,lastHIndex))
+        }
+        return tiles
+    }
+
+    fun updateCacheThemes(){
         for (zList in cacheData){
             for (tileList in zList){
                 for (tile in tileList){
@@ -26,6 +54,10 @@ class TileCache(private val map: Map){
                 }
             }
         }
+    }
+
+    fun updateCacheTiles(player: PlayerEntity, dimKey: Identifier){
+        updateCacheTiles(player, dimKey,lastCachedW,lastCachedH)
     }
     
     fun updateCacheTiles(player: PlayerEntity, dimKey: Identifier, w: Int, h: Int){
@@ -99,7 +131,12 @@ class TileCache(private val map: Map){
                 xDeltaIndex++
             }
         }
-        
+        cacheData = newCache
+        lastCachedDim = dimKey
+        lastCachedX = chunkPos.x
+        lastCachedZ = chunkPos.z
+        lastCachedW = chunkWidth
+        lastCachedH = chunkHeight
     }
 
     private fun gatherLayers(dimKey: Identifier, x: Int, y: Int, z: Int): List<TileStack>{
