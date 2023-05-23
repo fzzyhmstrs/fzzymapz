@@ -18,7 +18,7 @@ object RegisterLayer {
 
     //////////////////////////
 
-    val SURFACE_BIOMES = Registry.register(LAYERS, Identifier(FM.MOD_ID,"surface_biomes"), SurfaceBiomeLayer)
+    val SURFACE_BIOMES = Registry.register(LAYERS, SurfaceBiomeLayer.id, SurfaceBiomeLayer)
 
     //////////////////////////
 
@@ -26,7 +26,7 @@ object RegisterLayer {
 
     }
 
-    object EmptyLayer: MapLayer(RegisterTheme.EMPTY_TYPE) {
+    object EmptyLayer: MapLayer(RegisterTheme.EMPTY_TYPE, Identifier(FM.MOD_ID,"empty_layer")) {
 
         override fun shouldProcessChunk(x: Int, z: Int, world: World, chunk: WorldChunk): Boolean {
             return false
@@ -40,7 +40,7 @@ object RegisterLayer {
 
         override fun load(){}
 
-        override fun getTile(world: World, x: Int, z: Int): Tile {
+        override fun getTile(dimKey: Identifier, x: Int, y: Int, z: Int): Tile {
             return Tile.EMPTY
         }
 

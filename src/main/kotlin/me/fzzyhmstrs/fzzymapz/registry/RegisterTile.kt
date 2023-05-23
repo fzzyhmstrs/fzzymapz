@@ -11,12 +11,12 @@ import net.minecraft.util.Identifier
 
 object RegisterTile {
 
-    val TYPES = FabricRegistryBuilder.createDefaulted(TileType::class.java, Identifier(FM.MOD_ID,"tile_type"),
+    val TILES = FabricRegistryBuilder.createDefaulted(TileType::class.java, Identifier(FM.MOD_ID,"tile_type"),
     Identifier(FM.MOD_ID,"empty_type")).buildAndRegister()
-    val EMPTY = Registry.register(TYPES, Identifier(FM.MOD_ID,"empty_type"), EmptyType)
+    val EMPTY = Registry.register(TILES, Identifier(FM.MOD_ID,"empty_type"), EmptyType)
 
     /////////////////////
-    val CONNECTED_BIOME_TYPE = Registry.register(TYPES,Identifier(FM.MOD_ID,"connected_biome_type"), ConnectedBiomeType)
+    val CONNECTED_BIOME_TYPE = Registry.register(TILES,Identifier(FM.MOD_ID,"connected_biome_type"), ConnectedBiomeType)
 
     fun registerAll(){
 

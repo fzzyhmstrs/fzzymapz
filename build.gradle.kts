@@ -35,6 +35,9 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    flatDir {
+        dirs("F:\\Documents\\Mod Libraries\\fc\\build\\libs")
+    }
     maven {
         name = "Jitpack"
         url = uri("https://jitpack.io")
@@ -58,6 +61,11 @@ dependencies {
     val meVersion: String by project
     implementation("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$meVersion")
     annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$meVersion")
+
+    val fcVersion: String by project
+    modImplementation(":fzzy_core-$fcVersion"){
+        exclude("net.fabricmc.fabric-api")
+    }
 }
 
 tasks {

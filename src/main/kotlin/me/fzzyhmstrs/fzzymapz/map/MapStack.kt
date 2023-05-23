@@ -1,16 +1,19 @@
 package me.fzzyhmstrs.fzzymapz.map
 
-import me.fzzyhmstrs.fzzymapz.layer.MapLayer
-import me.fzzyhmstrs.fzzymapz.registry.RegisterTheme
+import com.google.common.collect.ArrayListMultimap
+import me.fzzyhmstrs.fzzymapz.point.DataPoint
 import me.fzzyhmstrs.fzzymapz.theme.Theme
+import me.fzzyhmstrs.fzzymapz.theme.ThemeTypeProviding
 import net.minecraft.util.Identifier
 
 class MapStack(val map: FzzyMap) {
 
-    private val themeMap: MutableMap<MapLayer, Theme> = mutableMapOf()
-    private val cache: TileCache = TileCache(map)
+    private val themeMap: MutableMap<ThemeTypeProviding, Theme> = mutableMapOf()
+    private val tileCache: TileCache = TileCache(this)
+    private val pointCache: PointCache = PointCache(this)
 
-    private val pointData: MutableMap<Identifier,MutableMap<Int, MutableMap<Int, DataPoint>>> = mutableMapOf()
+    internal var currentTarget: DataPoint? = null
+    internal val pointData: ArrayListMultimap<Identifier,DataPoint> = ArrayListMultimap.create()
 
     init{
         for (layer in map.getLayers()){
@@ -18,8 +21,12 @@ class MapStack(val map: FzzyMap) {
         }
     }
 
-    fun getCurrentTheme(layer: MapLayer): Theme{
-        return themeMap[layer] ?: RegisterTheme.EMPTY_TYPE.EMPTY_THEME
+    fun getCurrentTheme(part: ThemeTypeProviding): Theme{
+        return themeMap[part] ?: part.type.getDefaultTheme()
+    }
+
+    fun setCurrentTheme(part: ThemeTypeProviding,theme: Theme){
+        themeMap[part] = theme
     }
 
 }

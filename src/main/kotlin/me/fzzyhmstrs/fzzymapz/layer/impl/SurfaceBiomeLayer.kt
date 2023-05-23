@@ -1,16 +1,20 @@
 package me.fzzyhmstrs.fzzymapz.layer.impl
 
+import me.fzzyhmstrs.fzzymapz.FM
 import me.fzzyhmstrs.fzzymapz.layer.MapLayer
+import me.fzzyhmstrs.fzzymapz.registry.RegisterTheme
 import me.fzzyhmstrs.fzzymapz.registry.RegisterTile
 import me.fzzyhmstrs.fzzymapz.theme.impl.BiomeType
 import me.fzzyhmstrs.fzzymapz.tile.Tile
 import me.fzzyhmstrs.fzzymapz.tile.impl.ConnectedBiomeTile
 import me.fzzyhmstrs.fzzymapz.tile.impl.ConnectedBiomeType
 import net.minecraft.registry.RegistryKeys
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import net.minecraft.world.chunk.WorldChunk
 
-object SurfaceBiomeLayer: MapLayer(BiomeType) {
+object SurfaceBiomeLayer: MapLayer(RegisterTheme.BIOME, Identifier(FM.MOD_ID,"surface_biome_layer")) {
+//https://github.com/MattCzyr/NaturesCompass/blob/fabric-1.19.3/src/main/java/com/chaosthedude/naturescompass/utils/BiomeUtils.java
 
     override fun processChunkForTile(world: World, chunk: WorldChunk): Tile {
         val biome = chunk.highestNonEmptySection?.getBiome(8,0,8) ?: return Tile.EMPTY

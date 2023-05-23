@@ -8,7 +8,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.Identifier
 import kotlin.math.abs
 
-class TileCache(private val map: FzzyMap){
+class TileCache(private val mapStack: MapStack){
 
     private var cacheData: List<List<List<TileStack>>> = listOf()
     private var lastCachedDim: Identifier = Identifier(FM.MOD_ID,"dirty")
@@ -49,7 +49,7 @@ class TileCache(private val map: FzzyMap){
         for (zList in cacheData){
             for (tileList in zList){
                 for (tile in tileList){
-                    val theme = map.getCurrentTheme(tile.tile.layer)
+                    val theme = mapStack.getCurrentTheme(tile.tile.layer)
                     tile.updateTheme(theme)
                 }
             }
@@ -141,10 +141,10 @@ class TileCache(private val map: FzzyMap){
 
     private fun gatherLayers(dimKey: Identifier, x: Int, y: Int, z: Int): List<TileStack>{
         val layerList: MutableList<TileStack> = mutableListOf()
-        for (layer: MapLayer in map.getLayers()){
+        for (layer: MapLayer in mapStack.map.getLayers()){
             val tile = layer.getTile(dimKey,x,y,z)
             if (tile.hasContent){
-                val theme: Theme = map.getCurrentTheme(tile.layer)
+                val theme: Theme = mapStack.getCurrentTheme(tile.layer)
                 layerList.add(TileStack(tile, theme.getScale(),theme.provide(tile.id)))
             }
             if (layer.opaque()){

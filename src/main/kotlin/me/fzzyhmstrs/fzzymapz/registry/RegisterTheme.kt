@@ -6,6 +6,7 @@ import me.fzzyhmstrs.fzzymapz.FM
 import me.fzzyhmstrs.fzzymapz.theme.Theme
 import me.fzzyhmstrs.fzzymapz.theme.ThemeType
 import me.fzzyhmstrs.fzzymapz.theme.impl.BiomeType
+import me.fzzyhmstrs.fzzymapz.theme.impl.IconType
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
@@ -25,7 +26,7 @@ object RegisterTheme: SimpleSynchronousResourceReloadListener{
 
     val BIOME = Registry.register(TYPES, Identifier(FM.MOD_ID,"biome_type"), BiomeType)
     //val STRUCTURE = Registry.register(TYPES, Identifier(FM.MOD_ID,"structure_type"),StructureType)
-    //val ICON = Registry.register(TYPES, Identifier(FM.MOD_ID,"icon_type"),IconType)
+    val ICON = Registry.register(TYPES, Identifier(FM.MOD_ID,"icon_type"), IconType)
 
     //////////////////////////
 

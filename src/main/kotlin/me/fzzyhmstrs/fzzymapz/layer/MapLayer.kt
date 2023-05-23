@@ -3,12 +3,13 @@ package me.fzzyhmstrs.fzzymapz.layer
 import com.google.gson.JsonObject
 import me.fzzyhmstrs.fzzymapz.registry.RegisterTile
 import me.fzzyhmstrs.fzzymapz.theme.ThemeType
+import me.fzzyhmstrs.fzzymapz.theme.ThemeTypeProviding
 import me.fzzyhmstrs.fzzymapz.tile.Tile
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import net.minecraft.world.chunk.WorldChunk
 
-abstract class MapLayer(val type: ThemeType){
+abstract class MapLayer(override val type: ThemeType, override val id: Identifier): ThemeTypeProviding{
     
     // data is stored as (worldId -> Z -> X -> Tile)
     protected val data: MutableMap<Identifier,MutableMap<Int,MutableMap<Int,Tile>>> = mutableMapOf()
@@ -74,7 +75,7 @@ abstract class MapLayer(val type: ThemeType){
                 val worldMap: MutableMap<Int,MutableMap<Int, Tile>> = mutableMapOf()
                 for (entryType in jsonWorld.entrySet()){
                     val typeId = Identifier.tryParse(entryType.key)?:continue
-                    val type = RegisterTile.TYPES.get(typeId)?:continue
+                    val type = RegisterTile.TILES.get(typeId)?:continue
                     val jsonType = entryType.value.asJsonObject
                     for (entryZ in jsonType.entrySet()){
                         val z = entryZ.key.toIntOrNull()?:continue

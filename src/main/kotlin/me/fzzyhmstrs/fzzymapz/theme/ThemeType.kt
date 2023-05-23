@@ -14,7 +14,7 @@ abstract class ThemeType{
     protected abstract fun defaultTheme(): Identifier
 
     fun getDefaultTheme(): Theme{
-        return getTheme(defaultTheme())
+        return themes[defaultTheme()]?:RegisterTheme.EMPTY_TYPE.EMPTY_THEME
     }
 
     //provides the list of themes loaded to this type
@@ -22,7 +22,7 @@ abstract class ThemeType{
         return this.themes.values
     }
     fun getTheme(id: Identifier): Theme{
-        return themes[id]?:RegisterTheme.EMPTY_TYPE.EMPTY_THEME
+        return themes[id]?:getDefaultTheme()
     }
     fun addTheme(id: Identifier, theme: Theme){
         this.themes[id] = theme

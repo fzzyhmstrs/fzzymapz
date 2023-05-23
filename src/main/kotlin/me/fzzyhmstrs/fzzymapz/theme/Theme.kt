@@ -37,6 +37,8 @@ abstract class Theme(val type: ThemeType){
     // and return the tile texture ID as it's result
     abstract fun provide(inputId: Identifier): Identifier
 
-
+    companion object{
+        internal val FALLBACK = Identifier(FM.MOD_ID,"empty")
+    }
 
 }
