@@ -9,10 +9,12 @@ import me.fzzyhmstrs.fzzymapz.theme.ThemeTypeProviding
 import net.minecraft.util.Identifier
 import java.util.*
 
-class FzzyMap(
+class FzzyMap private constructor(
     val id: Identifier,
     private val layerMap: SortedMap<Int,MapLayer>,
-    private val defaultThemes: Map<ThemeTypeProviding,Identifier> = mapOf())
+    private val defaultThemes: Map<ThemeTypeProviding,Identifier> = mapOf(),
+    private val overlays: List<MapOverlay> = listOf(),
+    private val actions: List<RightClickAction> = listOf())
 {
 
     private val builtDefaultThemes: Map<ThemeTypeProviding,Theme> by lazy{
